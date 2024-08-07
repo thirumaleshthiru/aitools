@@ -1,0 +1,44 @@
+-- `users` table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    type ENUM('admin', 'user') NOT NULL DEFAULT 'user'
+);
+
+-- `categories` table
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- `tools` table
+CREATE TABLE tools (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tool_name VARCHAR(255) NOT NULL,
+    link varchar(255) NOT NULl,
+    description VARCHAR(255) NOT NULL,
+    tool_description TEXT NOT NULL,
+    cover_image BLOB,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+    ON DELETE SET NULL,
+    ON UPDATE CASCADE,
+);
+
+-- `prompts_and_reviews` table
+CREATE TABLE prompts_and_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    tool_id INT,
+    type ENUM('prompt', 'review') NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+    FOREIGN KEY (tool_id) REFERENCES tools(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
