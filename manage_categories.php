@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-
 // Fetch user details to check if the user is an admin
 $user_id = $_SESSION['user_id'];
 $stmt = $mysqli->prepare("SELECT type FROM users WHERE id = ?");
@@ -24,6 +23,10 @@ if ($user_type !== 'admin') {
     exit();
 }
 
+// Initialize message variables
+$message = '';
+$message_type = '';
+
 // Handle category deletion
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     $category_id = intval($_GET['delete']);
@@ -33,9 +36,11 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     $stmt->bind_param("i", $category_id);
     
     if ($stmt->execute()) {
-        echo "<p>Category deleted successfully!</p>";
+        $message = "Category deleted successfully!";
+        $message_type = 'success';
     } else {
-        echo "<p>Error deleting category. Please try again.</p>";
+        $message = "Error deleting category. Please try again.";
+        $message_type = 'danger';
     }
     $stmt->close();
 }
@@ -47,37 +52,22 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
     <title>Manage Categories</title>
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .delete-btn {
-            color: red;
-            text-decoration: none;
-        }
-        .delete-btn:hover {
-            text-decoration: underline;
-        }
-    </style>
 </head>
-<body>   <?php include 'navbar.php' ?>
-    <div class="container">
-        <h1>Manage Categories</h1>
-        <table>
+<body>
+    <?php include 'navbar.php'; ?>
+    <div class="container mt-5">
+        <h1 class="mb-4">Manage Categories</h1>
+        
+        <!-- Display messages -->
+        <?php if (!empty($message)): ?>
+            <div class="alert alert-<?php echo $message_type; ?>">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -94,7 +84,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                     echo "<tr>";
                     echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                     echo "<td>" . htmlspecialchars($row['category_name']) . "</td>";
-                    echo "<td><a href='manage_categories.php?delete=" . htmlspecialchars($row['id']) . "' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete this category?');\">Delete</a></td>";
+                    echo "<td><a href='manage_categories.php?delete=" . htmlspecialchars($row['id']) . "' class='btn btn-danger btn-sm' onclick=\"return confirm('Are you sure you want to delete this category?');\">Delete</a></td>";
                     echo "</tr>";
                 }
 
@@ -105,8 +95,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

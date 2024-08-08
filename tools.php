@@ -32,15 +32,18 @@ die("Error fetching categories: " . $mysqli->error);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));  
     gap: 70px;  
+    margin-top:5%;
 }
 
 .category {
     border: 1px solid black;
-    padding: 5px;
+    padding: 9px;
     display: flex;
     gap: 10px;
     justify-content: space-around;
     align-items: center;
+    border-radius:18px;
+     
 }
 
 .category a {
@@ -51,8 +54,8 @@ die("Error fetching categories: " . $mysqli->error);
     border: 1px solid black;
     border-radius: 50%;
     padding: 10px;
-    width: 20px; /* Adjust size for better visibility */
-    height: 20px; /* Adjust size for better visibility */
+    width: 20px;  
+    height: 20px;  
     display: flex;
     justify-content: center;
     align-items: center;

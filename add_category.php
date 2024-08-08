@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-
 // Fetch user details to check if the user is an admin
 $user_id = $_SESSION['user_id'];
 $stmt = $mysqli->prepare("SELECT type FROM users WHERE id = ?");
@@ -27,6 +26,7 @@ if ($user_type !== 'admin') {
 // Initialize variables
 $category_name = '';
 $errors = array();
+$success_message = '';
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -54,18 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("s", $category_name);
         
         if ($stmt->execute()) {
-            echo "Category added successfully!";
+            $success_message = "Category added successfully!";
         } else {
             $errors[] = "Error adding category. Please try again.";
         }
         $stmt->close();
-    }
-}
-
-// Display errors if any
-if (!empty($errors)) {
-    foreach ($errors as $error) {
-        echo "<p>$error</p>";
     }
 }
 ?>
@@ -76,37 +69,39 @@ if (!empty($errors)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
     <title>Add Category</title>
-    <style>
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-    </style>
 </head>
-<body><?php include 'navbar.php' ?>
-    <div class="container">
-        <h1>Add Category</h1>
+<body>
+    <?php include 'navbar.php'; ?>
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Category</h1>
+        
+        <!-- Display messages -->
+        <?php if (!empty($errors) || !empty($success_message)): ?>
+            <div class="alert <?php echo !empty($success_message) ? 'alert-success' : 'alert-danger'; ?>">
+                <?php 
+                foreach ($errors as $error) {
+                    echo "<p>$error</p>";
+                }
+                if (!empty($success_message)) {
+                    echo "<p>$success_message</p>";
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+
         <form action="add_category.php" method="post">
             <div class="form-group">
                 <label for="category_name">Category Name:</label>
-                <input type="text" id="category_name" name="category_name" value="<?php echo htmlspecialchars($category_name); ?>" required>
+                <input type="text" id="category_name" name="category_name" class="form-control" value="<?php echo htmlspecialchars($category_name); ?>" required>
             </div>
-            <button type="submit">Add Category</button>
+            <button type="submit" class="btn btn-primary">Add Category</button>
         </form>
     </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

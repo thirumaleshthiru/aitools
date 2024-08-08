@@ -31,11 +31,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category_id = trim($_POST['category_id']);
     $link = trim($_POST['link']);
 
-    $file_content = null;
+    $cover_image_path = null;
     if (isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] === UPLOAD_ERR_OK) {
-        $file_tmp = $_FILES['cover_image']['tmp_name'];
-        $file_type = $_FILES['cover_image']['type'];
-        $file_content = file_get_contents($file_tmp);
+        $upload_dir = 'uploads/';
+        $file_name = basename($_FILES['cover_image']['name']);
+        $target_file = $upload_dir . uniqid() . '_' . $file_name;
+        
+        if (move_uploaded_file($_FILES['cover_image']['tmp_name'], $target_file)) {
+            $cover_image_path = $target_file;
+        } else {
+            $errors[] = "Error uploading cover image.";
+        }
     }
 
     if (empty($tool_name)) {
@@ -56,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
         $stmt = $mysqli->prepare("INSERT INTO tools (tool_name, description, tool_description, cover_image, category_id, link) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssis", $tool_name, $description, $tool_description, $file_content, $category_id, $link);
+        $stmt->bind_param("ssssss", $tool_name, $description, $tool_description, $cover_image_path, $category_id, $link);
 
         if ($stmt->execute()) {
             $success = true;

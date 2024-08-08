@@ -20,7 +20,7 @@ CREATE TABLE tools (
     link varchar(255) NOT NULl,
     description VARCHAR(255) NOT NULL,
     tool_description TEXT NOT NULL,
-    cover_image BLOB,
+    cover_image VARCHAR(255);
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)
     ON DELETE SET NULL,

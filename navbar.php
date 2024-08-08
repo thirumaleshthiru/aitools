@@ -54,11 +54,4 @@ if (isset($_SESSION['user_id'])) {
         </ul>
     </div>
 </nav>
-
-<!-- Custom CSS for spacing -->
-<style>
-    .navbar-nav .nav-link {
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-</style>
+ 
